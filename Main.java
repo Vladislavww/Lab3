@@ -37,7 +37,9 @@ public class Main extends JFrame {
 	private JFileChooser fileChooser = null;
 	private JMenuItem saveToTextMenuItem;
 	private JMenuItem saveToGraphicsMenuItem; 
-	private JMenuItem searchValueMenuItem; 
+	private JMenuItem searchValueMenuItem;
+	private JMenuItem searchIntervalMenuItem;
+	private JMenuItem referenceMenuItem;
 	private JTextField textFieldFrom; 
 	private JTextField textFieldTo;
 	private JTextField textFieldStep;
@@ -97,17 +99,31 @@ public class Main extends JFrame {
 			renderer.setNeedle(value); // Обновить таблицу 
 			getContentPane().repaint();
 		} 
-	};	
+	};
+	Action searchInterval = new AbstractAction("Найти из диапазона"){
+		public void actionPerformed(ActionEvent event) { 
+			// Запросить пользователя ввести искомую строку 
+			Double value = Double.parseDouble(JOptionPane.showInputDialog(Main.this, "Введите нижнее значение для поиска", "Поиск значения", JOptionPane.QUESTION_MESSAGE));
+			Double value1 = Double.parseDouble(JOptionPane.showInputDialog(Main.this, "Введите верхнее значение для поиска", "Поиск значения", JOptionPane.QUESTION_MESSAGE));
+			// Установить введенное значение в качестве иголки
+			renderer.setInterval(value, value1);
+			getContentPane().repaint();
+		} 
+	};
 	// Добавить действие в меню "Таблица" 
+	
 	searchValueMenuItem = tableMenu.add(searchValueAction);
 	// По умолчанию пункт меню является недоступным (данных ещ? нет)
-	searchValueMenuItem.setEnabled(true); 
+	searchValueMenuItem.setEnabled(false); 
 	Action show_reference = new AbstractAction("О программе"){
 		public void actionPerformed(ActionEvent event){
 			JOptionPane.showMessageDialog(Main.this, "Программу сделал \n Яцков, 6 группа", "О программе", JOptionPane.INFORMATION_MESSAGE, icon);
 		}
 	};
-	searchValueMenuItem = refMenu.add(show_reference);
+	referenceMenuItem = refMenu.add(show_reference);
+	referenceMenuItem.setEnabled(true);
+	searchIntervalMenuItem = tableMenu.add(searchInterval);
+	searchIntervalMenuItem.setEnabled(false);
 	// Создать область с полями ввода для границ отрезка и шага 
 	// Создать подпись для ввода левой границы отрезка 
 	JLabel labelForFrom = new JLabel("X изменяется на интервале от:");
@@ -164,6 +180,7 @@ public class Main extends JFrame {
 			saveToTextMenuItem.setEnabled(true); 
 			saveToGraphicsMenuItem.setEnabled(true); 
 			searchValueMenuItem.setEnabled(true);
+			searchIntervalMenuItem.setEnabled(true);
 		}
 		catch (NumberFormatException ex) {
 			JOptionPane.showMessageDialog(Main.this, "Ошибка в формате записи числа с плавающей точкой", "Ошибочный формат числа", JOptionPane.WARNING_MESSAGE);
@@ -184,7 +201,8 @@ public class Main extends JFrame {
 			// Пометить элементы меню как недоступные
 			saveToTextMenuItem.setEnabled(false); 
 			saveToGraphicsMenuItem.setEnabled(false); 
-			searchValueMenuItem.setEnabled(false); 
+			searchValueMenuItem.setEnabled(false);
+			searchIntervalMenuItem.setEnabled(false);
 			// Обновить область содержания главного окна 
 			getContentPane().validate();
 		}
@@ -259,7 +277,8 @@ protected void saveToTextFile(File selectedFile) {
 			System.exit(-1); 
 		} 
 		// Зарезервировать места в массиве коэффициентов столько, сколько аргументов командной строки 
-		Double[] coefficients = new Double[args.length]; 
+		Double[] coefficients = new Double[args.length];
+		
 		int i = 0; 
 		try { 
 			// Перебрать аргументы, пытаясь преобразовать их в Double 
@@ -271,7 +290,7 @@ protected void saveToTextFile(File selectedFile) {
 			// Если преобразование невозможно - сообщить об ошибке и завершиться 
 			System.out.println("Ошибка преобразования строки '" + args[i] + "' в число типа Double"); 
 			System.exit(-2); 
-		} 
+		}
 		// Создать экземпляр главного окна, передав ему коэффициенты 
 		Main frame = new Main(coefficients); 
 		// Задать действие, выполняемое при закрытии окна 

@@ -16,6 +16,8 @@ public class GornerTableCellRenderer implements TableCellRenderer{
 	private JLabel label = new JLabel(); 
 	// Ищем ячейки, строковое представление которых совпадает с needle // (иголкой). Применяется аналогия поиска иголки в стоге сена, в роли // стога сена - таблица 
 	private String needle = null; 
+	private Double low = null;
+	private Double high = null;
 	private DecimalFormat formatter = (DecimalFormat)NumberFormat.getInstance(); 
 	
 	public GornerTableCellRenderer() { 
@@ -44,17 +46,22 @@ public class GornerTableCellRenderer implements TableCellRenderer{
 		else{
 			panel.setBackground(Color.WHITE);
 		}
-		if (col==1 && needle!=null && needle.equals(formattedDouble)) { // Номер столбца = 1 (т.е. второй столбец) + иголка не null // (значит что-то ищем) + // значение иголки совпадает со значением ячейки таблицы - // окрасить задний фон панели в красный цвет 
+		if(col!=0 && needle!=null && needle.equals(formattedDouble)){ // Номер столбца = 1 (т.е. второй столбец) + иголка не null // (значит что-то ищем) + // значение иголки совпадает со значением ячейки таблицы - // окрасить задний фон панели в красный цвет 
 			panel.setBackground(Color.RED); 
-		} else {
-			// Иначе - в обычный белый 
-			//panel.setBackground(Color.WHITE); 
-		} 
+		}
+		if(col!=0 && low!=null && low.compareTo((Double)value) == -1 && high.compareTo((Double)value) == 1){
+			panel.setBackground(Color.RED); 
+		}
 		return panel;
 	}
 	
 	public void setNeedle(String needle) { 
 		this.needle = needle; 
+	}
+	
+	public void setInterval(Double low, Double high){ 
+		this.low = low;
+		this.high = high;
 	}
 }
 	
