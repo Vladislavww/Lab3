@@ -46,7 +46,7 @@ public class Main extends JFrame {
 	private Box hBoxResult;
 	private GornerTableCellRenderer renderer = new GornerTableCellRenderer();
 	private GornerTableModel data; 
-	
+	//
 	public Main(Double[] coefficients) {
 		super("Табулирование многочлена на отрезке по схеме Горнера"); 
 		this.coefficients = coefficients;

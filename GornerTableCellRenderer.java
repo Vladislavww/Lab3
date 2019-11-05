@@ -54,7 +54,7 @@ public class GornerTableCellRenderer implements TableCellRenderer{
 		}
 		return panel;
 	}
-	
+	//
 	public void setNeedle(String needle) { 
 		this.needle = needle; 
 	}
