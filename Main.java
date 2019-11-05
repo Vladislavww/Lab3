@@ -37,6 +37,7 @@ public class Main extends JFrame {
 	private JFileChooser fileChooser = null;
 	private JMenuItem saveToTextMenuItem;
 	private JMenuItem saveToGraphicsMenuItem; 
+	private JMenuItem saveToCSVMenuItem; 
 	private JMenuItem searchValueMenuItem;
 	private JMenuItem searchIntervalMenuItem;
 	private JMenuItem referenceMenuItem;
@@ -89,7 +90,20 @@ public class Main extends JFrame {
 		}
 	};
 	saveToGraphicsMenuItem = fileMenu.add(saveToGraphicsAction);
-	saveToGraphicsMenuItem.setEnabled(false);	
+	saveToGraphicsMenuItem.setEnabled(true);
+	Action saveToCSVaction = new AbstractAction("Сохранить в CSV") { 
+		public void actionPerformed(ActionEvent event) {
+			if (fileChooser==null) { 
+				fileChooser = new JFileChooser(); 
+				fileChooser.setCurrentDirectory(new File("."));
+			}
+			if (fileChooser.showSaveDialog(Main.this) == JFileChooser.APPROVE_OPTION){ 
+				saveToCSVfile(fileChooser.getSelectedFile());
+			}
+		}
+	};
+	saveToCSVMenuItem = fileMenu.add(saveToCSVaction);
+	saveToCSVMenuItem.setEnabled(false);
 	// Создать новое действие по поиску значений многочлена 
 	Action searchValueAction = new AbstractAction("Найти значение многочлена") { 
 		public void actionPerformed(ActionEvent event) { 
@@ -181,6 +195,7 @@ public class Main extends JFrame {
 			saveToGraphicsMenuItem.setEnabled(true); 
 			searchValueMenuItem.setEnabled(true);
 			searchIntervalMenuItem.setEnabled(true);
+			saveToCSVMenuItem.setEnabled(true);
 		}
 		catch (NumberFormatException ex) {
 			JOptionPane.showMessageDialog(Main.this, "Ошибка в формате записи числа с плавающей точкой", "Ошибочный формат числа", JOptionPane.WARNING_MESSAGE);
@@ -203,6 +218,7 @@ public class Main extends JFrame {
 			saveToGraphicsMenuItem.setEnabled(false); 
 			searchValueMenuItem.setEnabled(false);
 			searchIntervalMenuItem.setEnabled(false);
+			saveToCSVMenuItem.setEnabled(false);
 			// Обновить область содержания главного окна 
 			getContentPane().validate();
 		}
@@ -245,14 +261,14 @@ protected void saveToTextFile(File selectedFile) {
 	try { 
 		// Создать новый символьный поток вывода, направленный в указанный файл 
 		PrintStream out = new PrintStream(selectedFile);
-	out.println("Результаты табулирования многочлена по схеме Горнера"); 
-	out.print("Многочлен: "); 
-	for (int i=0; i<coefficients.length; i++) { 
-		out.print(coefficients[i] + "*X^" + (coefficients.length-i-1)); 
-		if (i!=coefficients.length-1){ 
-			out.print(" + ");
+		out.println("Результаты табулирования многочлена по схеме Горнера"); 
+		out.print("Многочлен: "); 
+		for (int i=0; i<coefficients.length; i++) { 
+			out.print(coefficients[i] + "*X^" + (coefficients.length-i-1)); 
+			if (i!=coefficients.length-1){ 
+				out.print(" + ");
+			}
 		}
-	}
 		out.println(""); 
 		out.println("Интервал от " + data.getFrom() + " до " + data.getTo() + " с шагом " + data.getStep()); 
 		out.println("===================================================="); 
@@ -267,7 +283,19 @@ protected void saveToTextFile(File selectedFile) {
 	}
 }
 	
-	
+protected void saveToCSVfile(File selectedFile) { 
+	try { 
+		PrintStream out = new PrintStream(selectedFile);
+		// Записать в поток вывода значения в точках 
+		for (int i = 0; i<data.getRowCount(); i++) {
+			out.println(data.getValueAt(i,0) + ";" + data.getValueAt(i,1) + ";" + data.getValueAt(i,2) + ";" + data.getValueAt(i,3)); }
+		// Закрыть поток 
+		out.close(); 
+
+	}
+	catch (FileNotFoundException e){		
+	}
+}	
 	
 	
 	public static void main(String[] args) {
