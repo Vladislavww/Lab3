@@ -90,7 +90,7 @@ public class Main extends JFrame {
 		}
 	};
 	saveToGraphicsMenuItem = fileMenu.add(saveToGraphicsAction);
-	saveToGraphicsMenuItem.setEnabled(true);
+	saveToGraphicsMenuItem.setEnabled(false);
 	Action saveToCSVaction = new AbstractAction("Сохранить в CSV") { 
 		public void actionPerformed(ActionEvent event) {
 			if (fileChooser==null) { 
